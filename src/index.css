@@ -19,3 +19,7 @@ button {
 		transform: rotate(360deg);
 	}
 }
+
+.input {
+	@apply w-[38vw] bg-transparent rounded-full border-2 border-white px-4 py-3 placeholder:text-gray-300 text-white font-medium;
+}

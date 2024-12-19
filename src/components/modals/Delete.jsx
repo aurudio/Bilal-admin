@@ -8,6 +8,7 @@ const Delete = ({ modal, setModal, productKey, setProductKey }) => {
 		try {
 			await remove(objectRef)
 			console.log('Object successfully deleted!')
+			setModal(false)
 		} catch (error) {
 			console.error('Error removing object: ', error)
 		}

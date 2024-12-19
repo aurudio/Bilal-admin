@@ -1,5 +1,10 @@
 import { push } from 'firebase/database'
-import { getDownloadURL, ref, uploadBytesResumable } from 'firebase/storage'
+import {
+	deleteObject,
+	getDownloadURL,
+	ref,
+	uploadBytesResumable,
+} from 'firebase/storage'
 import React, { useEffect, useRef, useState } from 'react'
 import { database, refDb, storage } from '../firebase/firebase'
 import Navbar from './Navbar'
@@ -7,6 +12,7 @@ import Navbar from './Navbar'
 const AddProduct = () => {
 	const filePicker = useRef(null)
 	const [isLoading, setIsLoading] = useState(false)
+	const [hover, setHover] = useState(false)
 	const [title, setTitle] = useState('')
 	const [desc, setDesc] = useState('')
 	const [art_number, setArt_Number] = useState('')
@@ -34,8 +40,11 @@ const AddProduct = () => {
 		if (images.length >= 10) {
 			return alert('Вы добавили максимальное количество фото')
 		}
-		const fileName = new Date().getTime() + file.name // Уникальное имя файла
-		const storageRef = ref(storage, fileName) // Ссылка на файл в хранилище
+		if (!file) {
+			return
+		}
+		const fileName = new Date().getTime() + file.name
+		const storageRef = ref(storage, fileName)
 		const uploadTask = uploadBytesResumable(storageRef, file)
 
 		uploadTask.on(
@@ -72,6 +81,22 @@ const AddProduct = () => {
 		setIsLoading(false)
 	}
 
+	const deleteImage = (url) => {
+		const imageRef = ref(storage, url)
+		console.log(url)
+
+		deleteObject(imageRef)
+			.then(() => {
+				console.log('Файл успешно удален')
+				setImages(images.pop())
+				setImages([...images])
+				localStorage.setItem('images', JSON.stringify(images))
+			})
+			.catch((error) => {
+				console.error('Ошибка при удалении файла:', error)
+			})
+	}
+
 	function addProductToDb() {
 		if (
 			!title.trim() ||
@@ -103,7 +128,7 @@ const AddProduct = () => {
 				setCategory('')
 				setSeason('')
 				setImages([])
-				localStorage.removeItem('images')
+				localStorage.setItem('images', '[]')
 			})
 			.catch((error) => {
 				console.error('Error adding object:', error)
@@ -135,9 +160,7 @@ const AddProduct = () => {
 							placeholder='Введите '
 							ref={filePicker}
 							accept='image/*,.png,.jpg,.web'
-							onChange={(e) => {
-								getImage(e.target.files[0])
-							}}
+							onChange={(e) => getImage(e.target.files[0])}
 						/>
 						<button
 							disabled={images.length >= 10 ? true : false}
@@ -152,19 +175,38 @@ const AddProduct = () => {
 						</button>
 					</div>
 					<div className=''>
-						<div className='w-96 h-96 bg-gray-800 rounded-xl overflow-hidden'>
+						<div
+							className='w-96 h-96 bg-gray-800 rounded-xl overflow-hidden flex justify-center items-center'
+							onMouseMove={() => setHover(true)}
+							onMouseLeave={() => setHover(false)}
+						>
 							{isLoading ? (
-								<div className='flex justify-center items-center m-auto min-h-[85vh]'>
-									<div className='loader rounded-[50%] w-28 h-28 border-[20px] border-transparent border-t-white'></div>
+								<div className='flex justify-center items-center m-auto'>
+									<div className='loader rounded-[50%] min-w-28 h-28 border-[20px] border-transparent border-t-white'></div>
 								</div>
 							) : (
-								<img
-									src={images[images.length - 1]}
-									alt=''
-									className='w-full h-full scale-[1.01]'
-								/>
+								<div className='relative'>
+									{hover ? (
+										<div className='absolute min-w-full z-10 min-h-full flex justify-center items-center bg-[rgba(0,0,0,0.5)]'>
+											<img
+												src='/close.svg'
+												alt=''
+												className='w-20 cursor-pointer opacity-80 hover:scale-110 duration-200 hover:shadow-lg hover:shadow-red-400 rounded-full'
+												onClick={() => deleteImage(images[images.length - 1])}
+											/>
+										</div>
+									) : (
+										''
+									)}
+									<img
+										src={images[images.length - 1]}
+										alt=''
+										className='w-full h-full scale-[1.01]'
+									/>
+								</div>
 							)}
 						</div>
+
 						<p className='text-center mt-4 text-xl text-white'>
 							{images.length}/10
 						</p>

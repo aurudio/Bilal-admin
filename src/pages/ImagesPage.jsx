@@ -16,7 +16,7 @@ const ImagesPage = () => {
 			<Navbar />
 			<div className='relative overflow-x-auto w-[90%] m-auto rounded-2xl max-h-[85vh] bg-gray-700 px-7 pt-0 pb-8'>
 				{images.map((item, key) => (
-					<img src={item} key={key} alt='' />
+					<img src={item} key={key} alt='' className='w-48' />
 				))}
 			</div>
 		</div>

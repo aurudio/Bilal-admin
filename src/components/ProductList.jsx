@@ -2,15 +2,16 @@ import { onValue, ref } from 'firebase/database'
 import React, { useEffect, useState } from 'react'
 import { database } from '../firebase/firebase'
 import Delete from './modals/Delete'
-import Edit from './modals/Edit'
+import Images from './modals/Images'
+import Product from './Product'
 
 function ProductList() {
 	const [productKey, setProductKey] = useState('')
-	const [product, setProduct] = useState(null)
 	const [data, setData] = useState({})
 	const [isLoading, setIsLoading] = useState(true)
 	const [del, setDel] = useState(false)
-	const [edit, setEdit] = useState(false)
+	const [modal, setModal] = useState(false)
+	const [images, setImages] = useState([])
 
 	useEffect(() => {
 		const dataRef = ref(database, '/')
@@ -42,15 +43,14 @@ function ProductList() {
 				productKey={productKey}
 				setProductKey={setProductKey}
 			/>
-			<Edit
-				modal={edit}
-				setModal={setEdit}
-				productKey={productKey}
-				setProductKey={setProductKey}
-				product={product}
-				setProduct={setProduct}
+
+			<Images
+				modal={modal}
+				setModal={setModal}
+				images={images}
+				setImages={setImages}
 			/>
-			<div className='relative overflow-x-auto w-[90%] m-auto rounded-2xl max-h-[85vh] bg-gray-700 overflow-scroll'>
+			<div className='relative overflow-x-auto w-[90%] m-auto rounded-2xl h-[85vh] bg-gray-700 overflow-scroll'>
 				{isLoading ? (
 					<div className='flex justify-center items-center min-h-[85vh]'>
 						<div className='loader rounded-[50%] w-28 h-28 border-[20px] border-transparent border-t-white'></div>
@@ -58,14 +58,15 @@ function ProductList() {
 				) : (
 					<div className='flex flex-wrap gap-10 p-10'>
 						{Object.entries(data).map(([key, value]) => (
-							<div
-								key={key}
-								className='w-52 flex-col items-center grid place-content-between p-5 gap-6 bg-slate-800 rounded-3xl cursor-pointer hover:-translate-y-px hover:shadow-lg hover:shadow-[rgb(0,0,0,0.4)] duration-500 hover:duration-300'
-							>
-								<img src={value.image} alt='' className='w-full rounded-xl' />
-								<p className='text-white text-xl font-medium justify-self-center'>
-									{value.title}
-								</p>
+							<div key={key}>
+								<Product
+									setProductKey={setProductKey}
+									setDel={setDel}
+									id={key}
+									product={value}
+									setImages={setImages}
+									setModal={setModal}
+								/>
 							</div>
 						))}
 					</div>

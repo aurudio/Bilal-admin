@@ -14,17 +14,17 @@ const AddProduct = () => {
 	const [isLoading, setIsLoading] = useState(false)
 	const [hover, setHover] = useState(false)
 	const [title, setTitle] = useState('')
-	const [desc, setDesc] = useState('')
+	const [material, setMaterial] = useState('')
 	const [art_number, setArt_Number] = useState('')
-	const [category, setCategory] = useState('')
-	const [season, setSeason] = useState('')
+	const [sizes, setSizes] = useState('')
+	// const [price, setPrice] = useState('')
 	const [images, setImages] = useState([])
 	const inputs = [
 		{ state: title, setState: setTitle, placeholder: 'Название' },
-		{ state: desc, setState: setDesc, placeholder: 'Описание' },
 		{ state: art_number, setState: setArt_Number, placeholder: 'Артикул' },
-		{ state: category, setState: setCategory, placeholder: 'Категория' },
-		{ state: season, setState: setSeason, placeholder: 'Сезон' },
+		{ state: sizes, setState: setSizes, placeholder: 'Размеры' },
+		// { state: price, setState: setPrice, placeholder: 'Цена' },
+		{ state: material, setState: setMaterial, placeholder: 'Материал' },
 	]
 
 	useEffect(() => {
@@ -100,10 +100,10 @@ const AddProduct = () => {
 	function addProductToDb() {
 		if (
 			!title.trim() ||
-			!desc.trim() ||
+			!material.trim() ||
 			!art_number.trim() ||
-			!category.trim() ||
-			!season.trim()
+			!sizes.trim()
+			// !price.trim()
 		) {
 			alert('Заполните все поля')
 			return
@@ -111,10 +111,10 @@ const AddProduct = () => {
 
 		const obj = {
 			title,
-			desc,
+			material,
 			art_number,
-			category,
-			season,
+			sizes,
+			// price,
 			image: images,
 		}
 		const dbRef = refDb(database, `/`)
@@ -123,10 +123,10 @@ const AddProduct = () => {
 			.then(() => {
 				console.log('Object added successfully!', obj)
 				setTitle('')
-				setDesc('')
+				setMaterial('')
 				setArt_Number('')
-				setCategory('')
-				setSeason('')
+				setSizes('')
+				// setPrice('')
 				setImages([])
 				localStorage.setItem('images', '[]')
 			})
@@ -146,7 +146,7 @@ const AddProduct = () => {
 					<div className='flex flex-col gap-6'>
 						{inputs.map((item, key) => (
 							<input
-								key={key}
+								// key={key}
 								type='text'
 								value={item.state}
 								onChange={(e) => item.setState(e.target.value)}
@@ -186,11 +186,11 @@ const AddProduct = () => {
 								</div>
 							) : (
 								<div className='relative'>
-									{hover ? (
+									{hover && images.length > 0 ? (
 										<div className='absolute min-w-full z-10 min-h-full flex justify-center items-center bg-[rgba(0,0,0,0.5)]'>
 											<img
 												src='/close.svg'
-												alt=''
+												alt='Фотографий нету'
 												className='w-20 cursor-pointer opacity-80 hover:scale-110 duration-200 hover:shadow-lg hover:shadow-red-400 rounded-full'
 												onClick={() => deleteImage(images[images.length - 1])}
 											/>
@@ -200,7 +200,7 @@ const AddProduct = () => {
 									)}
 									<img
 										src={images[images.length - 1]}
-										alt=''
+										alt='Фотографий нету'
 										className='w-full h-full scale-[1.01]'
 									/>
 								</div>

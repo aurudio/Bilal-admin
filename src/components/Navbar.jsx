@@ -8,23 +8,22 @@ const Navbar = () => {
 
 	return (
 		<div className='flex justify-between px-16 py-7'>
-			<img
-				src='/logo.png'
-				alt='Logo'
-				width={50}
+			<div
+				className='flex items-end cursor-pointer'
 				onClick={() => navigate('/')}
-			/>
+			>
+				<img src='/logo.svg' alt='Logo' width={150} />
+			</div>
 			<div className='flex gap-8'>
 				<button
-					disabled={pathname === '/' ? true : false}
+					disabled={pathname === '/list' ? true : false}
 					className={`py-2 px-10 text-white font-bold  rounded-full ${
-						pathname === '/'
+						pathname === '/list'
 							? 'bg-my-dark-cyan'
 							: 'bg-my-cyan hover:-translate-y-[1px] hover:shadow-md hover:shadow-[#828282] duration-200 active:translate-y-[0] active:shadow-none active:bg-my-dark-cyan'
 					}
-						
 						`}
-					onClick={() => navigate('/')}
+					onClick={() => navigate('/list')}
 				>
 					Список
 				</button>
@@ -35,7 +34,6 @@ const Navbar = () => {
 							? 'bg-my-dark-cyan'
 							: 'bg-my-cyan hover:-translate-y-[1px] hover:shadow-md hover:shadow-[#828282] duration-200 active:translate-y-[0] active:shadow-none active:bg-my-dark-cyan'
 					}
-						
 						`}
 					onClick={() => navigate('/add')}
 				>

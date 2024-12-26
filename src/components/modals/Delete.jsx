@@ -4,6 +4,7 @@ import { database } from '../../firebase/firebase'
 
 const Delete = ({ modal, setModal, productKey, setProductKey }) => {
 	const deleteObject = async () => {
+		console.log(`/${productKey}`)
 		const objectRef = ref(database, `/${productKey}`)
 		try {
 			await remove(objectRef)
